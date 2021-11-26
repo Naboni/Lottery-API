@@ -4,22 +4,13 @@ const router = require("express").Router()
 const prisma = new PrismaClient()
 
 router.post('/', async (req, res, next) => {
-    let lots = []
-    for (let index = 0; index < 10; index++) {
-        const num = Math.floor(Math.random() * 10000000)
-        lots.push(num)
-    }
-    var stringObj = JSON.stringify(lots);
     try {
-        const lottery = await prisma.lottery.create({
-            data: {
-                ...req.body,
-                lotteryNumbers: stringObj
-            }
+        const ticket = await prisma.ticket.create({
+            data: req.body
         })
         res.status(201).json({
-            message: "Lottery Created.",
-            lottery
+            message: "Ticket Created.",
+            ticket
         })
     } catch (error) {
         next(error)
@@ -28,14 +19,14 @@ router.post('/', async (req, res, next) => {
 
 router.get("/", async (req, res, next) => {
     try {
-        const lotteries = await prisma.lottery.findMany({
+        const tickets = await prisma.ticket.findMany({
             include: {
                 User: true
             }
         })
         res.status(200).json({
-            message: "Lotteries List",
-            lotteries
+            message: "Tickets List",
+            tickets
         })
     } catch (error) {
         next(error)
@@ -45,14 +36,14 @@ router.get("/", async (req, res, next) => {
 router.get("/:id", async (req, res, next) => {
     const { id } = req.params
     try {
-        const lottery = await prisma.lottery.findFirst({
+        const ticket = await prisma.ticket.findFirst({
             where: {
                 id: Number(id)
             }
         })
         res.status(200).json({
-            message: "Lotter with an id " + id,
-            lottery
+            message: "Ticket with an id " + id,
+            ticket
         })
     } catch (error) {
         next(error)
@@ -62,14 +53,14 @@ router.get("/:id", async (req, res, next) => {
 router.delete("/:id", async (req, res, next) => {
     const { id } = req.params
     try {
-        const deletedLottery = await prisma.lottery.delete({
+        const deletedTicket = await prisma.ticket.delete({
             where: {
                 id: Number(id)
             }
         })
         res.status(200).json({
-            message: "Deleted Lottery",
-            deletedLottery
+            message: "Deleted Ticket",
+            deletedTicket
         })
     } catch (error) {
 

@@ -1,18 +1,22 @@
 require('dotenv').config()
 const express = require('express');
-const bodyParser = require('body-parser')
+const bodyParser = require('body-parser');
 const app = express();
 const port = process.env.PORT;
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
-const { PrismaClient } = require('@prisma/client')
-const prisma = new PrismaClient()
 const userRoutes = require('./routes/users')
 const lotteryRoutes = require('./routes/lottery')
+const ticketRoutes = require('./routes/ticket')
+
+// prisma instance
+const { PrismaClient } = require('@prisma/client')
+const prisma = new PrismaClient()
 
 // route middlewares
 app.use('/api/user', userRoutes)
 app.use('/api/lottery', lotteryRoutes)
+app.use('/api/ticket', ticketRoutes)
 
 // catching error
 app.use((req, res, next) => {

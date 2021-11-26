@@ -2,6 +2,8 @@ require('dotenv').config()
 const router = require("express").Router()
 const { userRegister, userLogin } = require('../Utils/auth')
 const { PrismaClient } = require('@prisma/client')
+const check_auth = require('../middlewares/check_auth')
+const check_role = require('../middlewares/check_role')
 const prisma = new PrismaClient()
 
 // Register User
@@ -13,7 +15,7 @@ router.post('/login', async (req, res, next) => {
     await userLogin(req, res, next)
 })
 
-router.get('/', async (req, res, next) => {
+router.get('/', check_auth, async (req, res, next) => {
     try {
         const users = await prisma.user.findMany({
             include: {
