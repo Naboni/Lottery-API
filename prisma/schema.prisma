@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -20,22 +20,22 @@ model User {
   gender    Gender
   age       Int
   role      Role      @default(USER)
-  Lottery   Lottery[]
-  Ticket    Ticket[]
+  lotteries Lottery[]
+  tickets   Ticket[]
 }
 
 model Lottery {
   id             Int    @id @default(autoincrement())
-  lotteryNumbers String @unique
-  User           User?  @relation(fields: [userId], references: [id])
-  userId         Int?
+  lotteryNumbers String
+  user           User   @relation(fields: [userId], references: [id])
+  userId         Int
 }
 
 model Ticket {
-  id           Int   @id @default(autoincrement())
-  ticketNumber Int   @unique
-  User         User? @relation(fields: [userId], references: [id])
-  userId       Int?
+  id           Int  @id @default(autoincrement())
+  ticketNumber Int
+  user         User @relation(fields: [userId], references: [id])
+  userId       Int
 }
 
 enum Gender {

@@ -10,17 +10,21 @@ router.post('/', async (req, res, next) => {
         lots.push(num)
     }
     var stringObj = JSON.stringify(lots);
+    const { userId } = req.body;
     try {
         const lottery = await prisma.lottery.create({
             data: {
-                ...req.body,
-                lotteryNumbers: stringObj
+                lotteryNumbers: stringObj,
+                user: {
+                    connect: {
+                        id: userId,
+                    }
+                }
             }
         })
-        res.status(201).json({
-            message: "Lottery Created.",
+        res.status(201).json(
             lottery
-        })
+        )
     } catch (error) {
         next(error)
     }
@@ -30,13 +34,12 @@ router.get("/", async (req, res, next) => {
     try {
         const lotteries = await prisma.lottery.findMany({
             include: {
-                User: true
+                user: true
             }
         })
-        res.status(200).json({
-            message: "Lotteries List",
+        res.status(200).json(
             lotteries
-        })
+        )
     } catch (error) {
         next(error)
     }
@@ -50,10 +53,26 @@ router.get("/:id", async (req, res, next) => {
                 id: Number(id)
             }
         })
-        res.status(200).json({
-            message: "Lotter with an id " + id,
+        res.status(200).json(
             lottery
+        )
+    } catch (error) {
+        next(error)
+    }
+})
+
+router.patch("/:id", async (req, res, next) => {
+    const { id } = req.params
+    try {
+        const patchedLottery = await prisma.lottery.update({
+            where: {
+                id: Number(id)
+            },
+            data: req.body,
         })
+        res.status(200).json(
+            patchedLottery
+        )
     } catch (error) {
         next(error)
     }
@@ -67,12 +86,11 @@ router.delete("/:id", async (req, res, next) => {
                 id: Number(id)
             }
         })
-        res.status(200).json({
-            message: "Deleted Lottery",
+        res.status(200).json(
             deletedLottery
-        })
+        )
     } catch (error) {
-
+        next(error)
     }
 })
 
