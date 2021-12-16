@@ -19,7 +19,8 @@ router.get('/', check_auth, async (req, res, next) => {
     try {
         const users = await prisma.user.findMany({
             include: {
-                Lottery: true
+                lotteries: true,
+                tickets: true,
             }
         })
         res.json({ message: "List of Users", users: users })
@@ -28,7 +29,7 @@ router.get('/', check_auth, async (req, res, next) => {
     }
 })
 
-router.get('/:id', async (req, res, next) => {
+router.get('/:id', check_auth, async (req, res, next) => {
     const { id } = req.params
     try {
         const user = await prisma.user.findUnique({
@@ -36,11 +37,12 @@ router.get('/:id', async (req, res, next) => {
                 id: Number(id)
             },
             include: {
-                Lottery: true
+                lotteries: true,
+                tickets: true
             }
         })
         if (user) {
-            res.json({ message: `User ${id}`, user: user })
+            res.json(user)
         } else {
             res.json({ message: `User not found` })
         }
@@ -58,7 +60,7 @@ router.patch('/:id', async (req, res, next) => {
             },
             data: req.body,
             include: {
-                Lottery: true
+                lotteries: true
             }
         })
         res.json({ message: `Updated user ${id}`, updatedUser })
